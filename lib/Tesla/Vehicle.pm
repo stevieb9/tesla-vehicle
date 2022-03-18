@@ -351,7 +351,7 @@ For now, you can use the L<Tesla::API> distribution to write your own accessors
 that aren't complete here. (This distribution uses that module for all Tesla
 API access).
 
-=head1 Object Management Methods
+=head1 OBJECT MANAGEMENT METHODS
 
 =head2 new(%params)
 
@@ -399,7 +399,7 @@ Send in a true value to allow us to do this.
 
 I<Default>: False
 
-=head1 Vehicle Summary Methods
+=head1 VEHICLE SUMMARY METHODS
 
 =head2 in_service
 
@@ -421,7 +421,7 @@ Returns an alpha-numeric string that contains the actual Vehicle Identification
 Number of your vehicle. This value is located on a stamped plate on the driver's
 side bottom on the outside of your windshield.
 
-=head1 Vehicle Identification Methods
+=head1 VEHICLE IDENTIFICATION METHODS
 
 =head2 id($id)
 
@@ -465,7 +465,7 @@ Example:
         1234567891012 => "Steve's Model S",
     }
 
-=head1 Command Methods
+=head1 COMMAND METHODS
 
 =head2 wake
 
@@ -479,7 +479,7 @@ Use this method to wake the vehicle up manually.
 
 Default wake timeout is 30 seconds, and is set in the constant C<WAKE_TIMEOUT>.
 
-=head1 Aggregate Data Methods
+=head1 AGGREGATE DATA METHODS
 
 These methods aggregate all attributes of the vehicle that relate to a specific
 aspect of the vehicle. Methods that allow access to individual attributes of
@@ -549,7 +549,7 @@ Returns attributes related to the actual configuration of your vehicle.
 
 I<Return>: Hash reference.
 
-=head1 Vehicle State Attribute Methods
+=head1 VEHICLE STATE ATTRIBUTE METHODS
 
 =head2 dashcam
 
@@ -577,7 +577,7 @@ Returns a bool whether the vehicle is in "Santa" mode or not.
 Returns a bool indicating whether someone with a valid FOB key is in proximity
 of the vehicle.
 
-=head1 Drive State Attribute Methods
+=head1 DRIVE STATE ATTRIBUTE METHODS
 
 Retrieves information regarding the actual operation and location of the
 vehicle.
@@ -608,8 +608,8 @@ Returns a signed float of the current Longitude of the vehicle.
 
 =head2 power
 
-Returns a signed float that contains the current kWh (Kilowatt-hours) the car is
-currently consuming in its operation.
+Returns a signed float that contains the current kWh (Kilowatt-hours) per mile
+the car is currently consuming in its operation.
 
 A negative value indicates that either the car is plugged in and charging, or
 that the regenerative brakes are engaged and are replenishing the battery (eg.
@@ -619,7 +619,7 @@ the car is going downhill and the car is decelerating).
 
 Returns a float of the vehicle's speed in MPH.
 
-=head1 Charge State Attribute Methods
+=head1 CHARGE STATE ATTRIBUTE METHODS
 
 =head2 battery_level
 
@@ -677,7 +677,7 @@ Returns an integer containing the estimated number of minutes to fully charge
 the batteries, taking into consideration voltage level, Amps requested and
 drawn etc.
 
-=head1 Climate State Attribute Methods
+=head1 CLIMATE STATE ATTRIBUTE METHODS
 
 =head2 bioweapon_mode
 
