@@ -11,7 +11,7 @@ use Data::Dumper;
 our $VERSION = '0.01';
 
 use constant {
-    DEBUG_ONLINE    => 1,
+    DEBUG_ONLINE    => 0,
     WAKE_TIMEOUT    => 30,
     WAKE_INTERVAL   => 2,
     WAKE_BACKOFF    => 1.15
@@ -277,10 +277,8 @@ sub wake {
             select(undef, undef, undef, $wake_interval);
             if ($wakeup_called_at + WAKE_TIMEOUT < time) {
                 printf(
-                    qq~
-                        \nVehicle with ID %d couldn't be woken up within %d
-                        seconds.\n\n
-                    ~,
+                    "\nVehicle with ID %d couldn't be woken up within %d " .
+                    "seconds.\n\n",
                     $self->id,
                     WAKE_TIMEOUT
                 );
@@ -321,10 +319,8 @@ sub _online_check {
             $self->wake;
         }
         printf(
-            qq~
-                \nVehicle with ID %d is offline. Either wake it up with a call to
-                wake(), or set "auto_wake => 1" in your call to new()\n\n"
-            ~,
+            "\nVehicle with ID %d is offline. Either wake it up with a call to " .
+            "wake(), or set 'auto_wake => 1' in your call to new()\n\n",
             $self->id
         );
         exit;
