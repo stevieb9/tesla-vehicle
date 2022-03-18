@@ -348,7 +348,7 @@ API access).
 
 =head1 Object Management Methods
 
-sub new(%params)
+=head2 new(%params)
 
 Instantiates and returns a new L<Tesla::Vehicle> object. We subclass L<Tesla::API>
 so there are several things inherited.
@@ -550,6 +550,10 @@ I<Return>: Hash reference.
 
 Returns a string of the state of the dashcam (eg. "Recording").
 
+=head2 online
+
+Is the vehicle online or asleep?
+
 =head2 odometer
 
 Returns the number of miles the vehicle is traveled since new, as a floating point
@@ -734,7 +738,7 @@ The temperature outside of the vehicle.
 
 What the driver's side temperature setting is set to.
 
-=head2 temperature_setting_driver
+=head2 temperature_setting_passenger
 
 What the passenger's side temperature setting is set to.
 
