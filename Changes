@@ -8,3 +8,4 @@ Revision history for Tesla-Vehicle
     - Added auto_wake()
     - Added wake()
     - Added several 'summary' methods
+    - Added drive_state() and several accessor methods

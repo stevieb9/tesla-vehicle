@@ -11,6 +11,7 @@ use Data::Dumper;
 our $VERSION = '0.01';
 
 use constant {
+    DEBUG_ONLINE    => 1,
     WAKE_TIMEOUT    => 30,
     WAKE_INTERVAL   => 2,
     WAKE_BACKOFF    => 1.15
@@ -106,6 +107,11 @@ sub charge_state {
     $self->_online_check;
     return $self->data->{charge_state};
 }
+sub drive_state {
+    my ($self) = @_;
+    $self->_online_check;
+    return $self->data->{drive_state};
+}
 
 # Vehicle State Methods
 
@@ -121,6 +127,30 @@ sub sentry_mode {
 }
 sub santa_mode {
     return $_[0]->data->{vehicle_state}{santa_mode};
+}
+
+# Drive State Methods
+
+sub gear {
+    return $_[0]->data->{drive_state}{shift_state};
+}
+sub gps_as_of {
+    return $_[0]->data->{drive_state}{gps_as_of};
+}
+sub heading {
+    return $_[0]->data->{drive_state}{heading};
+}
+sub latitude {
+    return $_[0]->data->{drive_state}{latitude};
+}
+sub longitude {
+    return $_[0]->data->{drive_state}{longitude};
+}
+sub power {
+    return $_[0]->data->{drive_state}{power};
+}
+sub speed {
+    return $_[0]->data->{drive_state}{speed};
 }
 
 # Charge State Methods
@@ -208,6 +238,12 @@ sub _id {
 }
 sub _online_check {
     my ($self) = @_;
+
+    if (DEBUG_ONLINE) {
+        my $online = $self->online;
+        printf "Vehicle is %s\n", $online ? 'ONLINE' : 'OFFLINE';
+    }
+
     if (! $self->online) {
         if ($self->auto_wake) {
             $self->wake;
@@ -436,6 +472,44 @@ Returns a bool indicating whether the vehicle is in sentry mode or not.
 =head2 santa_mode
 
 Returns a bool whether the vehicle is in "Santa" mode or not.
+
+=head1 Drive State Methods
+
+Retrieves information regarding the actual operation and location of the
+vehicle.
+
+=head2 gear
+
+Returns a single alpha character representing the gear the vehicle is in.
+
+One of C<P> for parked, C<N> for Neutral, C<D> for Drive and C<R> for reverse.
+
+=head2 gps_as_of
+
+Returns an integer that is the timestamp that the GPS data was last refreshed
+from the vehicle.
+
+=head2 heading
+
+Returns an integer between C<0> and C<360> which is the current compass
+heading of the vehicle.
+
+=head2 latitude
+
+Returns a signed float of the current Latitude of the vehicle.
+
+=head2 longitude
+
+Returns a signed float of the current Longitude of the vehicle.
+
+=head2 power
+
+Returns a float that contains the current kWh (Kilowatt-hours) the car is
+currently consuming in its operation.
+
+=head2 speed
+
+Returns a float of the vehicle's speed in MPH.
 
 =head1 Charge State Attribute Methods
 
