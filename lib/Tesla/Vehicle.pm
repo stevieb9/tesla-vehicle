@@ -318,12 +318,14 @@ sub _online_check {
         if ($self->auto_wake) {
             $self->wake;
         }
-        printf(
-            "\nVehicle with ID %d is offline. Either wake it up with a call to " .
-            "wake(), or set 'auto_wake => 1' in your call to new()\n\n",
-            $self->id
-        );
-        exit;
+        else {
+            printf(
+                "\nVehicle with ID %d is offline. Either wake it up with a call to " .
+                    "wake(), or set 'auto_wake => 1' in your call to new()\n\n",
+                $self->id
+            );
+            exit;
+        }
     }
 }
 
