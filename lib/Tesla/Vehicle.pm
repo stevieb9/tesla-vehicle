@@ -335,6 +335,11 @@ sub __placeholder{}
 
 Tesla::Vehicle - Access information and command Tesla automobiles via the API
 
+=for html
+<a href="https://github.com/stevieb9/tesla-vehicle/actions"><img src="https://github.com/stevieb9/tesla-vehicle/workflows/CI/badge.svg"/></a>
+<a href='https://coveralls.io/github/stevieb9/tesla-vehicle?branch=main'><img src='https://coveralls.io/repos/stevieb9/tesla-vehicle/badge.svg?branch=main&service=github' alt='Coverage Status' /></a>
+
+
 =head1 DESCRIPTION
 
 This distribution provides methods for accessing and updating aspects of your
