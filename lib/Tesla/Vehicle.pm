@@ -603,8 +603,12 @@ Returns a signed float of the current Longitude of the vehicle.
 
 =head2 power
 
-Returns a float that contains the current kWh (Kilowatt-hours) the car is
+Returns a signed float that contains the current kWh (Kilowatt-hours) the car is
 currently consuming in its operation.
+
+A negative value indicates that either the car is plugged in and charging, or
+that the regenerative brakes are engaged and are replenishing the battery (eg.
+the car is going downhill and the car is decelerating).
 
 =head2 speed
 
