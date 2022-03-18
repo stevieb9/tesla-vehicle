@@ -2,3 +2,4 @@ Revision history for Tesla-Vehicle
 
 0.01 UNREL
     - Auto generated distribution with Dist::Mgr
+    - Added basic core and some additional functionality
