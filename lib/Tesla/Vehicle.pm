@@ -34,10 +34,25 @@ sub auto_wake {
         $self->{auto_wake} = $auto_wake;
     }
 
-    return $self->auto_wake // 0;
+    return $self->{auto_wake} // 0;
 }
 
-# Vehicle Identification
+# Vehicle Summary Methods
+
+sub in_service {
+    return $_[0]->summary->{in_service};
+}
+sub option_codes {
+    return $_[0]->summary->{option_codes};
+}
+sub vehicle_id {
+    return $_[0]->summary->{vehicle_id};
+}
+sub vin {
+    return $_[0]->summary->{vin};
+}
+
+# Vehicle Identification Methods
 
 sub id {
     # Tries to figure out the ID to use in API calls
@@ -71,7 +86,7 @@ sub name {
     return $self->list->{$self->id};
 }
 
-# Top Level Data Structures
+# Top Level Data Structure Methods
 
 sub data {
     my ($self) = @_;
@@ -92,7 +107,7 @@ sub charge_state {
     return $self->data->{charge_state};
 }
 
-# Vehicle State
+# Vehicle State Methods
 
 sub online {
     my $status = $_[0]->summary->{state};
@@ -108,7 +123,7 @@ sub santa_mode {
     return $_[0]->data->{vehicle_state}{santa_mode};
 }
 
-# Charge State
+# Charge State Methods
 
 sub battery_level {
     return $_[0]->data->{charge_state}{battery_level};
@@ -144,7 +159,7 @@ sub minutes_to_full_charge {
     return $_[0]->data->{charge_state}{minutes_to_full_charge};
 }
 
-# Command Related
+# Command Related Methods
 
 sub wake {
     my ($self) = @_;
@@ -174,7 +189,7 @@ sub wake {
     }
 }
 
-# Private
+# Private Methods
 
 sub _id {
     my ($self, $id) = @_;
@@ -274,6 +289,28 @@ require it online, and the vehicle is currently offline.
 Send in a true value to allow us to do this.
 
 I<Default>: False
+
+=head1 Vehicle Summary Methods
+
+=head2 in_service
+
+Returns a bool whether your vehicle is in service mode or not.
+
+=head2 option_codes
+
+Returns a comma-delimited list of option codes of the options that are enabled
+on your vehicle.
+
+=head2 vehicle_id
+
+Returns an integer of Tesla's representation of the vehicle identification of
+your vehicle. This is not the same as the ID you use to access the API.
+
+=head2 vin
+
+Returns an alpha-numeric string that contains the actual Vehicle Identification
+Number of your vehicle. This value is located on a stamped plate on the driver's
+side bottom on the outside of your windshield.
 
 =head1 Vehicle Identification Methods
 

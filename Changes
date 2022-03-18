@@ -7,3 +7,4 @@ Revision history for Tesla-Vehicle
       online to retrieve data from it
     - Added auto_wake()
     - Added wake()
+    - Added several 'summary' methods
