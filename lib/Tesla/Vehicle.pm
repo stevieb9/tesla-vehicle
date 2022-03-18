@@ -112,6 +112,11 @@ sub drive_state {
     $self->_online_check;
     return $self->data->{drive_state};
 }
+sub climate_state {
+    my ($self) = @_;
+    $self->_online_check;
+    return $self->data->{climate_state};
+}
 
 # Vehicle State Methods
 
@@ -187,6 +192,62 @@ sub charger_voltage {
 }
 sub minutes_to_full_charge {
     return $_[0]->data->{charge_state}{minutes_to_full_charge};
+}
+
+# Climate State Methods
+
+sub bioweapon_mode {
+    return $_[0]->data->{climate_state}{bioweapon_mode};
+}
+
+sub defroster_front {
+    return $_[0]->data->{climate_state}{front_defroster};
+}
+sub defroster_rear {
+    return $_[0]->data->{climate_state}{rear_defroster};
+}
+
+sub fan_status {
+    return $_[0]->data->{climate_state}{fan_status};
+}
+
+sub heater_battery {
+    return $_[0]->data->{climate_state}{battery_heater};
+}
+sub heater_seat_driver {
+    return $_[0]->data->{climate_state}{seat_heater_left};
+}
+sub heater_seat_passenger {
+    return $_[0]->data->{climate_state}{seat_heater_right};
+}
+sub heater_side_mirrors {
+    return $_[0]->data->{climate_state}{side_mirror_heaters};
+}
+sub heater_steering_wheel{
+    return $_[0]->data->{climate_state}{steering_wheel_heater};
+}
+sub heater_wipers {
+    return $_[0]->data->{climate_state}{outside_temp};
+}
+
+sub is_climate_on {
+    return $_[0]->data->{climate_state}{is_climate_on};
+}
+sub is_air_conditioning_on {
+    return $_[0]->data->{climate_state}{is_air_conditioning_on};
+}
+
+sub temperature_inside {
+    return $_[0]->data->{climate_state}{inside_temp};
+}
+sub temperature_outside {
+    return $_[0]->data->{climate_state}{outside_temp};
+}
+sub temperature_setting_driver {
+    return $_[0]->data->{climate_state}{driver_temp_setting};
+}
+sub temperature_setting_passenger {
+    return $_[0]->data->{climate_state}{passenger_temp_setting};
 }
 
 # Command Related Methods
@@ -458,6 +519,18 @@ Returns information regarding battery and charging information of your vehicle.
 
 I<Return>: Hash reference.
 
+=head2 drive_state
+
+Returns the information about the operation of the vehicle.
+
+I<Return>: Hash reference.
+
+=head2 climate_state
+
+Returns information regarding the climate state of the vehicle.
+
+I<Return>: Hash reference.
+
 =head1 Vehicle State Attribute Methods
 
 =head2 odometer
@@ -473,7 +546,7 @@ Returns a bool indicating whether the vehicle is in sentry mode or not.
 
 Returns a bool whether the vehicle is in "Santa" mode or not.
 
-=head1 Drive State Methods
+=head1 Drive State Attribute Methods
 
 Retrieves information regarding the actual operation and location of the
 vehicle.
@@ -568,6 +641,76 @@ through.
 Returns an integer containing the estimated number of minutes to fully charge
 the batteries, taking into consideration voltage level, Amps requested and
 drawn etc.
+
+=head1 Climate State Attribute Methods
+
+=head2 bioweapon_mode
+
+Yes, this is truly a thing. At least my Tesla vehicle has a mode that seals the
+vehicle from all outside air, and puts positive pressure inside the cabin to
+ensure that no contaminents can enter the vehicle.
+
+This method returns a bool to indicate whether this mode is enabled or not.
+
+=head2 defroster_front
+
+Is the front windshield defroster on or not
+
+=head2 defroster_rear
+
+Is the rear window defroster on or not.
+
+=head2 fan_status
+
+Returns an integer that represents the climate fan speed.
+
+=head2 heater_battery
+
+Is the battery warmer on or not.
+
+=head2 heater_seat_driver
+
+Is the driver's seat warmer on.
+
+=head2 heater_seat_passenger
+
+Is the passenger's seat warmer on.
+
+=head2 heater_side_mirrors
+
+Is the wing mirror heater on.
+
+=head2 heater_steering_wheel
+
+Is the steering wheel warmer on or not
+
+=head2 heater_wipers
+
+Is the windshield wiper warmer on.
+
+=head2 is_climate_on
+
+Is the climate system currently active.
+
+=head2 is_air_conditioning_on
+
+Is the air conditioning unit active.
+
+=head2 temperature_inside
+
+The current temperature inside of the vehicle cabin.
+
+=head2 temperature_outside
+
+The temperature outside of the vehicle.
+
+=head2 temperature_setting_driver
+
+What the driver's side temperature setting is set to.
+
+=head2 temperature_setting_driver
+
+What the passenger's side temperature setting is set to.
 
 =head1 AUTHOR
 

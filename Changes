@@ -9,3 +9,4 @@ Revision history for Tesla-Vehicle
     - Added wake()
     - Added several 'summary' methods
     - Added drive_state() and several accessor methods
+    - Added climate_state() and related attribute access methods
