@@ -8,7 +8,13 @@ use parent 'Tesla::API';
 use Carp qw(croak confess);
 use Data::Dumper;
 
-our $VERSION = '0.03';
+our $VERSION = '0.01';
+
+use constant {
+    WAKE_TIMEOUT    => 30,
+    WAKE_INTERVAL   => 2,
+    WAKE_BACKOFF    => 1.15
+};
 
 # Object Related
 
@@ -17,8 +23,18 @@ sub new {
     my $self = $class->SUPER::new(%params);
 
     $self->_id($params{id});
+    $self->auto_wake($params{auto_wake});
 
     return $self;
+}
+sub auto_wake {
+    my ($self, $auto_wake) = @_;
+
+    if (defined $auto_wake) {
+        $self->{auto_wake} = $auto_wake;
+    }
+
+    return $self->auto_wake // 0;
 }
 
 # Vehicle Identification
@@ -57,21 +73,31 @@ sub name {
 
 # Top Level Data Structures
 
-sub vehicle_data {
-    return $_[0]->api('VEHICLE_DATA', $_[0]->id);
+sub data {
+    my ($self) = @_;
+    $self->_online_check;
+    return $self->api('VEHICLE_DATA', $self->id);
 }
-sub vehicle_state {
-    return $_[0]->data->{vehicle_state};
+sub state {
+    my ($self) = @_;
+    $self->_online_check;
+    return $self->data->{vehicle_state};
 }
-sub vehicle_summary {
+sub summary {
     return $_[0]->api('VEHICLE_SUMMARY', $_[0]->id);
 }
 sub charge_state {
-    return $_[0]->data->{charge_state};
+    my ($self) = @_;
+    $self->_online_check;
+    return $self->data->{charge_state};
 }
 
 # Vehicle State
 
+sub online {
+    my $status = $_[0]->summary->{state};
+    return $status eq 'online' ? 1 : 0;
+}
 sub odometer {
     return $_[0]->data->{vehicle_state}{odometer};
 }
@@ -122,6 +148,30 @@ sub minutes_to_full_charge {
 
 sub wake {
     my ($self) = @_;
+
+    if (! $self->online) {
+
+        $self->api('WAKE_UP', $self->id);
+
+        my $wakeup_called_at = time;
+        my $wake_interval = WAKE_INTERVAL;
+
+        while (! $self->online) {
+            select(undef, undef, undef, $wake_interval);
+            if ($wakeup_called_at + WAKE_TIMEOUT < time) {
+                printf(
+                    qq~
+                        \nVehicle with ID %d couldn't be woken up within %d
+                        seconds.\n\n
+                    ~,
+                    $self->id,
+                    WAKE_TIMEOUT
+                );
+
+                $wake_interval *= WAKE_BACKOFF;
+            }
+        }
+    }
 }
 
 # Private
@@ -140,6 +190,22 @@ sub _id {
     }
 
     return $self->{data}{vehicle_id} || -1;
+}
+sub _online_check {
+    my ($self) = @_;
+    if (! $self->online) {
+        if ($self->auto_wake) {
+            $self->wake;
+        }
+        printf(
+            qq~
+                \nVehicle with ID %d is offline. Either wake it up with a call to
+                wake(), or set "auto_wake => 1" in your call to new()\n\n"
+            ~,
+            $self->id
+        );
+        exit;
+    }
 }
 
 sub __placeholder{}
@@ -184,6 +250,15 @@ C<list()>.
 As a last case resort, we will try to figure out the ID by ourselves. If we
 can't, and no ID has been set, methods that require an ID will C<croak()>.
 
+    auto_wake
+
+I<Optional, Bool>: If set, we will automatically wake up your vehicle on calls
+that require the car to be in an online state to retrieve data (via a call to
+C<wake()>). If not set and the car is asleep, we will print a warning and exit.
+You can set this after instantiation by a call to C<auto_wake()>.
+
+I<Default>: False.
+
     delay
 
 I<Optional, Integer>: The number of seconds to cache data returned from Tesla's
@@ -191,7 +266,16 @@ API.
 
 I<Default>: 2
 
-=head2 Vehicle Identification Methods
+=head2 auto_wake($bool)
+
+Informs this software if we should automatically wake a vehicle for calls that
+require it online, and the vehicle is currently offline.
+
+Send in a true value to allow us to do this.
+
+I<Default>: False
+
+=head1 Vehicle Identification Methods
 
 =head2 id($id)
 
@@ -231,15 +315,23 @@ and the value is the name you've assigned to that vehicle.
 Example:
 
     {
-        1234567891011 => 'Dream Machine',
-        1234567891012 => 'Model S',
+        1234567891011 => "Dream machine",
+        1234567891012 => "Steve's Model S",
     }
 
 =head1 Command Methods
 
-=head2 wake($id)
+=head2 wake
 
-NOT YET IMPLEMENTED FULLY.
+Wakes up an offline Tesla vehicle.
+
+Most Tesla API calls related to your vehicle require the vehicle to be in an
+online state. If C<auto_wake()> isn't set and you attempt to make an API call
+that requires the vehicle online, we will print a warning and exit.
+
+Use this method to wake the vehicle up manually.
+
+Default wake timeout is 30 seconds, and is set in the constant C<WAKE_TIMEOUT>.
 
 =head1 Aggregate Data Methods
 
@@ -249,7 +341,7 @@ these larger aggregates are listed below. For example, C<charge_state()> will
 return the C<battery_level> attribute, but so will C<battery_level()>. By using
 the aggregate method, you'll have to fish that attribute out yourself.
 
-=head2 vehicle_data
+=head2 data
 
 Returns a hash reference containing all available API data that Tesla provides
 for your vehicles.
@@ -268,7 +360,7 @@ their API for their vehicles.
 The data accessor methods listed below use this data, simply selecting out
 individual parts of it.
 
-=head2 vehicle_summary
+=head2 summary
 
 Returns an important list of information about your vehicle, and Tesla's API
 access.
@@ -279,7 +371,7 @@ C<vin>, the C<display_name> etc.
 
 I<Return>: Hash reference.
 
-=head2 vehicle_state
+=head2 state
 
 Returns the C<vehicle_state> section of Tesla's vehicle data. This includes
 things like whether the car is locked, whether there is media playing, the

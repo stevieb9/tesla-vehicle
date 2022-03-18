@@ -3,3 +3,7 @@ Revision history for Tesla-Vehicle
 0.01 UNREL
     - Auto generated distribution with Dist::Mgr
     - Added basic core and some additional functionality
+    - Added checking for online status in calls that require the car being
+      online to retrieve data from it
+    - Added auto_wake()
+    - Added wake()
