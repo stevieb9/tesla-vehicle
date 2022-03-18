@@ -107,15 +107,20 @@ sub charge_state {
     $self->_online_check;
     return $self->data->{charge_state};
 }
+sub climate_state {
+    my ($self) = @_;
+    $self->_online_check;
+    return $self->data->{climate_state};
+}
 sub drive_state {
     my ($self) = @_;
     $self->_online_check;
     return $self->data->{drive_state};
 }
-sub climate_state {
+sub vehicle_config {
     my ($self) = @_;
     $self->_online_check;
-    return $self->data->{climate_state};
+    return $self->data->{vehicle_config};
 }
 
 # Vehicle State Methods
@@ -525,15 +530,21 @@ Returns information regarding battery and charging information of your vehicle.
 
 I<Return>: Hash reference.
 
+=head2 climate_state
+
+Returns information regarding the climate state of the vehicle.
+
+I<Return>: Hash reference.
+
 =head2 drive_state
 
 Returns the information about the operation of the vehicle.
 
 I<Return>: Hash reference.
 
-=head2 climate_state
+=head2 vehicle_config
 
-Returns information regarding the climate state of the vehicle.
+Returns attributes related to the actual configuration of your vehicle.
 
 I<Return>: Hash reference.
 
