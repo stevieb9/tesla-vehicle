@@ -120,6 +120,9 @@ sub climate_state {
 
 # Vehicle State Methods
 
+sub dashcam {
+    return $_[0]->data->{vehicle_state}{dashcam_state};
+}
 sub online {
     my $status = $_[0]->summary->{state};
     return $status eq 'online' ? 1 : 0;
@@ -132,6 +135,9 @@ sub sentry_mode {
 }
 sub santa_mode {
     return $_[0]->data->{vehicle_state}{santa_mode};
+}
+sub user_present {
+    return $_[0]->data->{vehicle_state}{is_user_present};
 }
 
 # Drive State Methods
@@ -533,6 +539,10 @@ I<Return>: Hash reference.
 
 =head1 Vehicle State Attribute Methods
 
+=head2 dashcam
+
+Returns a string of the state of the dashcam (eg. "Recording").
+
 =head2 odometer
 
 Returns the number of miles the vehicle is traveled since new, as a floating point
@@ -545,6 +555,11 @@ Returns a bool indicating whether the vehicle is in sentry mode or not.
 =head2 santa_mode
 
 Returns a bool whether the vehicle is in "Santa" mode or not.
+
+=head2 user_present
+
+Returns a bool indicating whether someone with a valid FOB key is in proximity
+of the vehicle.
 
 =head1 Drive State Attribute Methods
 
