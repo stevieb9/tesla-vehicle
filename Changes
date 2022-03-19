@@ -1,5 +1,8 @@
 Revision history for Tesla-Vehicle
 
+0.03 UNREL
+    -
+
 0.02    2022-03-19
     - Upper-cased method headers in POD
     - _online_check() "not awake" warning now only executes if auto_wake is
