@@ -638,7 +638,7 @@ You can set this after instantiation by a call to C<auto_wake()>.
 
 I<Default>: False.
 
-    delay
+    api_cache_time
 
 I<Optional, Integer>: The number of seconds to cache data returned from Tesla's
 API.
@@ -679,28 +679,6 @@ B<Parameters>:
 I<Optional, Bool>: True (C<1>) to enable, false (C<0>) to disable the warnings.
 
 I<Default>: True
-
-=head1 VEHICLE SUMMARY METHODS
-
-=head2 in_service
-
-Returns a bool whether your vehicle is in service mode or not.
-
-=head2 option_codes
-
-Returns a comma-delimited list of option codes of the options that are enabled
-on your vehicle.
-
-=head2 vehicle_id
-
-Returns an integer of Tesla's representation of the vehicle identification of
-your vehicle. This is not the same as the ID you use to access the API.
-
-=head2 vin
-
-Returns an alpha-numeric string that contains the actual Vehicle Identification
-Number of your vehicle. This value is located on a stamped plate on the driver's
-side bottom on the outside of your windshield.
 
 =head1 VEHICLE IDENTIFICATION METHODS
 
@@ -745,6 +723,28 @@ Example:
         1234567891011 => "Dream machine",
         1234567891012 => "Steve's Model S",
     }
+
+=head1 VEHICLE SUMMARY METHODS
+
+=head2 in_service
+
+Returns a bool whether your vehicle is in service mode or not.
+
+=head2 option_codes
+
+Returns a comma-delimited list of option codes of the options that are enabled
+on your vehicle.
+
+=head2 vehicle_id
+
+Returns an integer of Tesla's representation of the vehicle identification of
+your vehicle. This is not the same as the ID you use to access the API.
+
+=head2 vin
+
+Returns an alpha-numeric string that contains the actual Vehicle Identification
+Number of your vehicle. This value is located on a stamped plate on the driver's
+side bottom on the outside of your windshield.
 
 =head1 COMMAND METHODS
 
