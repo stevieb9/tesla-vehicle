@@ -1,10 +1,13 @@
 Revision history for Tesla-Vehicle
 
-0.02 UNREL
+0.02    2022-03-19
     - Upper-cased method headers in POD
     - _online_check() "not awake" warning now only executes if auto_wake is
       disabled
     - Added charging_stations_nearby()
+    - Added several command methods to actually operate the vehicle
+    - Updated Tesla::API to accept body content parameters for the new command
+      methods, therefore bumped prereq to v0.03
 
 0.01    2022-03-18
     - Auto generated distribution with Dist::Mgr

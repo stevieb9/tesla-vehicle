@@ -21,8 +21,12 @@ use constant {
 
 sub new {
     my ($class, %params) = @_;
+
+    # 'delay' param handled by parent
+
     my $self = $class->SUPER::new(%params);
 
+    $self->warn($params{warn});
     $self->_id($params{id});
     $self->auto_wake($params{auto_wake});
 
@@ -36,6 +40,11 @@ sub auto_wake {
     }
 
     return $self->{auto_wake} // 0;
+}
+sub warn {
+    my ($self, $warn) = @_;
+    $self->{warn} = $warn if defined $warn;
+    return $self->{warn} // 1;
 }
 
 # Vehicle Summary Methods
@@ -128,6 +137,9 @@ sub vehicle_config {
 sub dashcam {
     return $_[0]->data->{vehicle_state}{dashcam_state};
 }
+sub locked {
+    return $_[0]->data->{vehicle_state}{locked};
+}
 sub online {
     my $status = $_[0]->summary->{state};
     return $status eq 'online' ? 1 : 0;
@@ -141,6 +153,13 @@ sub sentry_mode {
 sub santa_mode {
     return $_[0]->data->{vehicle_state}{santa_mode};
 }
+sub trunk_front {
+    return $_[0]->data->{vehicle_state}{rt};
+}
+sub trunk_rear {
+    return $_[0]->data->{vehicle_state}{rt};
+}
+
 sub user_present {
     return $_[0]->data->{vehicle_state}{is_user_present};
 }
@@ -287,6 +306,217 @@ sub temperature_setting_passenger {
 
 # Command Related Methods
 
+sub bioweapon_mode_toggle {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('HVAC_BIOWEAPON_MODE', $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't toggle bioweapon mode: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub climate_on {
+    my ($self) = @_;
+    $self->_online_check;
+    my $return = $self->api('CLIMATE_ON', $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn climate on: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub climate_off {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('CLIMATE_OFF', $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn climate off: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub climate_defrost_max {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('MAX_DEFROST', $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't enable the defroster: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub doors_lock {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('LOCK', $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't unlock the doors: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub doors_unlock {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('UNLOCK', $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't unlock the doors: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub horn_honk {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('HONK_HORN', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't honk the horn: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub lights_flash {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('FLASH_LIGHTS', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't flash the exterior lights: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub media_playback_toggle {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('MEDIA_TOGGLE_PLAYBACK', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't toggle audio playback: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub media_track_next {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('MEDIA_NEXT_TRACK', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't skip to next audio track: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub media_track_previous {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('MEDIA_PREVIOUS_TRACK', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't skip to previous audio track: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub media_volume_down {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('MEDIA_VOLUME_DOWN', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn volume down: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub media_volume_up {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api('MEDIA_VOLUME_UP', $self->id);
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn volume up: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub trunk_front_actuate {
+    my ($self) = @_;
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        'ACTUATE_TRUNK',
+        $self->id,
+        { which_trunk => 'front' }
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't actuate front trunk: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub trunk_rear_actuate {
+    my ($self) = @_;
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        'ACTUATE_TRUNK',
+        $self->id,
+        { which_trunk => 'rear' }
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't actuate rear trunk: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
 sub wake {
     my ($self) = @_;
 
@@ -365,7 +595,6 @@ Tesla::Vehicle - Access information and command Tesla automobiles via the API
 <a href="https://github.com/stevieb9/tesla-vehicle/actions"><img src="https://github.com/stevieb9/tesla-vehicle/workflows/CI/badge.svg"/></a>
 <a href='https://coveralls.io/github/stevieb9/tesla-vehicle?branch=main'><img src='https://coveralls.io/repos/stevieb9/tesla-vehicle/badge.svg?branch=main&service=github' alt='Coverage Status' /></a>
 
-
 =head1 DESCRIPTION
 
 This distribution provides methods for accessing and updating aspects of your
@@ -416,6 +645,17 @@ API.
 
 I<Default>: 2
 
+    warn
+
+Enables or disables the warnings that we receive from Tesla if there's a failure
+to execute one of the L</COMMAND METHODS>.
+
+If enabled, we print these warnings to C<STDOUT>.
+
+I<Optional, Bool>: True (C<1>) to enable, false (C<0>) to disable the warnings.
+
+I<Default>: True
+
 =head2 auto_wake($bool)
 
 Informs this software if we should automatically wake a vehicle for calls that
@@ -424,6 +664,21 @@ require it online, and the vehicle is currently offline.
 Send in a true value to allow us to do this.
 
 I<Default>: False
+
+=head2 warn($bool)
+
+Enables or disables the warnings that we receive from Tesla if there's a failure
+to execute one of the L</COMMAND METHODS>.
+
+If enabled, we print these warnings to C<STDOUT>.
+
+B<Parameters>:
+
+    $bool
+
+I<Optional, Bool>: True (C<1>) to enable, false (C<0>) to disable the warnings.
+
+I<Default>: True
 
 =head1 VEHICLE SUMMARY METHODS
 
@@ -493,6 +748,110 @@ Example:
 
 =head1 COMMAND METHODS
 
+All command methods return a true value (C<1>)if the operation was successful,
+and a false value (C<0>) if the command failed.
+
+We will also print to C<STDOUT> the reason for the failure if one occurred.
+This warning includes the message we received from Tesla.
+
+You can disable these warnings from being displayed by sending in a false value
+to C<warn()>, or instantiate the object with C<new(warn => 0)>.
+
+Example warning:
+
+    $vehicle->media_volume_up;
+
+    # Output
+
+    Couldn't turn volume up: 'user_not_present'
+
+=head2 bioweapon_mode_toggle
+
+Toggles the HVAC Bio Weapon mode on or off.
+
+Returns true on success, false on failure.
+
+=head2 climate_on
+
+Turns the climate system on to whatever settings they last had.
+
+Returns true on success.
+
+Follow up with a call to C<is_climate_on()> to verify.
+
+=head2 climate_off
+
+Turns the climate system off.
+
+Returns true on success.
+
+Follow up with a call to C<is_climate_on()> to verify.
+
+=head2 climate_defrost_max
+
+Returns true if the call was successful, false otherwise.
+
+=head2 doors_lock
+
+Locks the car doors. Returns true on success.
+
+Follow up with a call to C<locked()> to verify.
+
+=head2 doors_unlock
+
+Unlocks the car doors. Returns true on success.
+
+Follow up with a call to C<locked()> to verify.
+
+=head2 horn_honk
+
+Honks the horn once. Returns true on success.
+
+=head2 lights_flash
+
+Flashes the exterior lights of the vehicle.
+
+Returns true on success.
+
+=head2 media_playback_toggle
+
+Play/Pause the currently loaded audio in the vehicle.
+
+Returns true on success, false on failure.
+
+I<NOTE>: Most often reason for fail is "User Not Present".
+
+=head2 media_track_next
+
+Skips to the next audio track.
+
+Returns true on success, false on failure.
+
+I<NOTE>: Most often reason for fail is "User Not Present".
+
+=head2 media_track_previous
+
+Skips to the previous audio track.
+
+Returns true on success, false on failure.
+
+I<NOTE>: Most often reason for fail is "User Not Present".
+
+=head2 media_volume_down
+
+Turns down the audio volume by one notch.
+
+Returns true on success, false on failure.
+
+I<NOTE>: Most often reason for fail is "User Not Present".
+
+=head2 media_volume_up
+
+Turns up the audio volume by one notch.
+
+Returns true on success, false on failure.
+
+I<NOTE>: Most often reason for fail is "User Not Present".
 =head2 wake
 
 Wakes up an offline Tesla vehicle.
@@ -504,6 +863,39 @@ that requires the vehicle online, we will print a warning and exit.
 Use this method to wake the vehicle up manually.
 
 Default wake timeout is 30 seconds, and is set in the constant C<WAKE_TIMEOUT>.
+
+=head2 trunk_rear_actuate
+
+Opens or closes the rear trunk.
+
+Returns true if the operation was successful, and false if not.
+
+You must give time for the trunk to shut before checking its status with the
+C<trunk_rear()> call.
+
+=head2 trunk_front_actuate
+
+Opens or closes the rear trunk.
+
+Returns true if the operation was successful, and false if not.
+
+You must give time for the trunk to shut before checking its status with the
+C<trunk_front()> call.
+
+=head2 wake
+
+Attempt to wake the vehicle up from sleep mode. Most method calls against this
+object require the vehicle to be awake.
+
+We don't return anything; the vehicle will be woken up, or it won't and your
+next method call will fail.
+
+By default, this software does not wake up the car automatically, it just
+C<croak>s if the car isn't awake and you attempt something it can't do while
+sleeping.
+
+Set C<< auto_wake => 1 >> in C<new()> or C<auto_wake(1)> to allow us to
+automatically wake the vehicle up.
 
 =head1 AGGREGATE DATA METHODS
 
@@ -581,9 +973,13 @@ I<Return>: Hash reference.
 
 Returns a string of the state of the dashcam (eg. "Recording").
 
+=head2 locked
+
+Returns true if the doors are locked, false if not.
+
 =head2 online
 
-Is the vehicle online or asleep?
+Returns true if the vehicle is online and ready to communicate, and false if
 
 =head2 odometer
 
@@ -597,6 +993,15 @@ Returns a bool indicating whether the vehicle is in sentry mode or not.
 =head2 santa_mode
 
 Returns a bool whether the vehicle is in "Santa" mode or not.
+
+=head2 trunk_front
+
+Returns true if the front trunk (ie. Frunk) is open, and false if it's
+closed.
+
+=head2 trunk_rear
+
+Returns true if the rear trunk is open, and false if it's closed.
 
 =head2 user_present
 
