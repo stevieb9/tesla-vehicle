@@ -174,9 +174,6 @@ sub speed {
 sub battery_level {
     return $_[0]->data->{charge_state}{battery_level};
 }
-sub charging_state {
-    return $_[0]->data->{charge_state}{charging_state};
-}
 sub charge_amps {
     return $_[0]->data->{charge_state}{charge_amps};
 }
@@ -201,6 +198,33 @@ sub charge_port_color {
 sub charger_voltage {
     return $_[0]->data->{charge_state}{charger_voltage};
 }
+sub charging_sites_nearby {
+    my ($self) = @_;
+    $self->_online_check;
+    my $sites = $self->api('NEARBY_CHARGING_SITES', $self->id);
+
+    my $super_chargers = $sites->{superchargers};
+    my $destination_chargers = $sites->{destination_charging};
+
+    my %stations;
+
+    my $cmp = 'distance_miles';
+
+    for (sort { $a->{$cmp} <=> $b->{$cmp} } @$super_chargers) {
+        next if $_->{available_stalls} == 0;
+        push @{ $stations{super_chargers} }, $_;
+    }
+
+    for (sort { $a->{$cmp} <=> $b->{$cmp} } @$destination_chargers) {
+        next if $_->{available_stalls} == 0;
+        push @{ $stations{destination_chargers} }, $_;
+    }
+
+    return \%stations;
+}
+sub charging_state {
+        return $_[0]->data->{charge_state}{charging_state};
+    }
 sub minutes_to_full_charge {
     return $_[0]->data->{charge_state}{minutes_to_full_charge};
 }
@@ -627,11 +651,6 @@ Returns a float of the vehicle's speed in MPH.
 
 Returns an integer of the percent that the battery is charged to.
 
-=head2 charging_state
-
-Returns a string that identifies the state of the vehicle's charger. Eg.
-"Disconnected", "Connected" etc.
-
 =head2 charge_amps
 
 Returns a float indicating how many Amps the vehicle is set to draw through the
@@ -672,6 +691,32 @@ Flashing" etc).
 
 Returns a float containing the actual Voltage level that the charger is connected
 through.
+
+=head2 charging_sites_nearby
+
+Returns a hash reference of arrays. The keys are C<super_chargers> and
+C<destination_chargers>. Under each key is an array of charging station
+details, each in a hash reference. The hash references are sorted in the
+array as closest first, farthest last. All stations with no available stalls
+have been removed. Each station has the following properties:
+
+    {
+        total_stalls     => 8,
+        site_closed      => $VAR1->{'super_chargers'}[0]{'site_closed'},
+        location => {
+            long => '-119.429277',
+            lat  => '49.885799'
+        },
+        name             => 'Kelowna, BC',
+        type             => 'supercharger',
+        distance_miles   => '26.259798',
+        available_stalls => 4
+    }
+
+=head2 charging_state
+
+Returns a string that identifies the state of the vehicle's charger. Eg.
+"Disconnected", "Connected" etc.
 
 =head2 minutes_to_full_charge
 

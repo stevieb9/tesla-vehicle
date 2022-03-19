@@ -4,7 +4,8 @@ Revision history for Tesla-Vehicle
     - Upper-cased method headers in POD
     - _online_check() "not awake" warning now only executes if auto_wake is
       disabled
-    -
+    - Added charging_stations_nearby()
+
 0.01    2022-03-18
     - Auto generated distribution with Dist::Mgr
     - Added basic core and some additional functionality
