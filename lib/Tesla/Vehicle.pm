@@ -8,7 +8,7 @@ use parent 'Tesla::API';
 use Carp qw(croak confess);
 use Data::Dumper;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use constant {
     DEBUG_ONLINE    => 0,
