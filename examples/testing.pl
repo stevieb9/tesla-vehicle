@@ -7,7 +7,11 @@ use Tesla::Vehicle;
 
 my $x = Tesla::Vehicle->new(auto_wake => 1);
 
-say $x->media_volume_up;
+
+#say $x->bioweapon_mode_toggle;
+
+say $x->bioweapon_mode;
+
 #say $x->trunk_rear_actuate;
 #say $x->trunk_rear;
 #say "c on: " . $x->climate_on;

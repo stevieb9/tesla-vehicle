@@ -599,12 +599,21 @@ Tesla::Vehicle - Access information and command Tesla automobiles via the API
 
 This distribution provides methods for accessing and updating aspects of your
 Tesla vehicle. Not all attributes available through Tesla's API have methods
-listed here yet, I'm only starting with the ones I use myself; I will add more
-as I go.
+listed here yet, but more will be added as time goes on.
 
-For now, you can use the L<Tesla::API> distribution to write your own accessors
-that aren't complete here. (This distribution uses that module for all Tesla
-API access).
+To access attributes that we don't have methods for, see the
+L</AGGREGATE DATA METHODS> section, pull that data, then extract out the info
+you want. If we don't have an aggregate data method for something you want yet,
+see L<Tesla::API> to be able to get this yourself.
+
+As always, requests for updates to my software is encouraged. Please just open
+an L<issue|https://github.com/stevieb9/tesla-vehicle/issues>.
+
+=head1 IMPORTANT
+
+The parent module L<Tesla::API> that we inherit the Tesla API access code from
+has a complex caching mechanism in place that you ought to know about. Please do
+read through the L<Tesla API Caching|Tesla::API/API CACHING> documentation.
 
 =head1 OBJECT MANAGEMENT METHODS
 

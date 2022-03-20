@@ -1,7 +1,8 @@
 Revision history for Tesla-Vehicle
 
 0.03 UNREL
-    -
+    - Added IMPORTANT section in POD to point to Tesla::API's caching
+      documentation
 
 0.02    2022-03-19
     - Upper-cased method headers in POD
