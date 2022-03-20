@@ -30,7 +30,7 @@ my %WriteMakefileArgs = (
         'Test::More' => '0',
     },
     PREREQ_PM => {
-        'Tesla::API'    => '0.03',
+        'Tesla::API'    => '0.04',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Tesla-Vehicle-*' },
