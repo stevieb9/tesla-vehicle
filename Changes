@@ -1,6 +1,6 @@
 Revision history for Tesla-Vehicle
 
-0.03 UNREL
+0.03    2022-03-20
     - Added IMPORTANT section in POD to point to Tesla::API's caching
       documentation
 
