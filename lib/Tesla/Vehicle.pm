@@ -371,7 +371,7 @@ sub doors_lock {
     $self->api_cache_clear;
 
     if (! $return->{result} && $self->warn) {
-        print "Couldn't unlock the doors: '$return->{reason}'\n";
+        print "Couldn't lock the doors: '$return->{reason}'\n";
     }
 
     return $return->{result};
@@ -696,7 +696,7 @@ one. This can be set as a parameter in C<new()>. If you attempt an API call that
 requires and ID and one isn't set, we C<croak()>.
 
 If you only have a single Tesla vehicle registered under your account, we will
-set C<my_vehicle_id()> to that ID when you instantiate the object.
+set C<id()> to that ID when you instantiate the object.
 
 You can also have this auto-populated in C<new()> by sending it in with the
 C<< id => $id >> parameter.
@@ -732,7 +732,7 @@ Returns a bool whether your vehicle is in service mode or not.
 
 =head2 option_codes
 
-Returns a comma-delimited list of option codes of the options that are enabled
+Returns a comma-delimited string of option codes of the options that are enabled
 on your vehicle.
 
 =head2 vehicle_id
