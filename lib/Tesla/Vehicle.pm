@@ -595,6 +595,30 @@ Tesla::Vehicle - Access information and command Tesla automobiles via the API
 <a href="https://github.com/stevieb9/tesla-vehicle/actions"><img src="https://github.com/stevieb9/tesla-vehicle/workflows/CI/badge.svg"/></a>
 <a href='https://coveralls.io/github/stevieb9/tesla-vehicle?branch=main'><img src='https://coveralls.io/repos/stevieb9/tesla-vehicle/badge.svg?branch=main&service=github' alt='Coverage Status' /></a>
 
+=head1 SYNOPSIS
+
+    use Tesla::Vehicle;
+
+    my $car = Tesla::Vehicle->new;
+
+    $car->wake if ! $car->online;
+
+    if ($car->locked) {
+        $car->doors_unlock;
+        $car->climate_on;
+
+        if ($car->outside_temp < 0) { # Freezing!
+            $car->climate_defrost_max;
+        }
+    }
+
+    printf(
+        "%s is at %d%% charge, is moving %d MPH and is using %.2f kWh per mile\n",
+        $car->name,
+        $car->battery_level,
+        $car->power
+    );
+
 =head1 DESCRIPTION
 
 This distribution provides methods for accessing and updating aspects of your
