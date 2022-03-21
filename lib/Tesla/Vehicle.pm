@@ -615,8 +615,8 @@ Tesla::Vehicle - Access information and command Tesla automobiles via the API
     printf(
         "%s is at %d%% charge, is moving %d MPH and is using %.2f kWh per mile\n",
         $car->name,
-        $car->speed,
         $car->battery_level,
+        $car->speed,
         $car->power
     );
 
