@@ -607,7 +607,7 @@ Tesla::Vehicle - Access information and command Tesla automobiles via the API
         $car->doors_unlock;
         $car->climate_on;
 
-        if ($car->outside_temp < 0) { # Freezing!
+        if ($car->temperature_outside < 0) { # Freezing!
             $car->climate_defrost_max;
         }
     }
