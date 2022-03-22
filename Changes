@@ -1,7 +1,7 @@
 Revision history for Tesla-Vehicle
 
 0.06 UNREL
-    -
+    - Return instead of print the return value of options()
 
 0.05    2022-03-22
     - Fix issue where instead of timing out the wake() call properly, we were

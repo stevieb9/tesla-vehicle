@@ -22,8 +22,7 @@ use constant {
 sub new {
     my ($class, %params) = @_;
 
-    # 'delay' param handled by parent
-
+    # See Tesla::API new() for params the parent handles
     my $self = $class->SUPER::new(%params);
 
     $self->warn($params{warn});
@@ -64,7 +63,7 @@ sub options {
         $option_definitions{$_} = $option_codes->{$_};
     }
 
-    print Dumper \%option_definitions;
+    return \%option_definitions;
 }
 sub vehicle_id {
     return $_[0]->summary->{vehicle_id};
