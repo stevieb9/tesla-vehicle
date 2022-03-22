@@ -4,6 +4,8 @@ Revision history for Tesla-Vehicle
     - Fix issue where instead of timing out the wake() call properly, we were
       repeatedly displaying the timeout notice, then doing nothing which
       resulted in an uninit warning being thrown (fixes #4)
+    - Renamed option_codes() to options(). Tesla::API now handles option_codes()
+    - options() now returns an href of code => description pairs
 
 0.04    2022-03-21
     - Added SYNOPSIS

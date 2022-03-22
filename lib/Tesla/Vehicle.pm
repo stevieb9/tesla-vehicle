@@ -52,8 +52,19 @@ sub warn {
 sub in_service {
     return $_[0]->summary->{in_service};
 }
-sub option_codes {
-    return $_[0]->summary->{option_codes};
+sub options {
+    my ($self) = @_;
+    my $vehicle_options = $self->summary->{option_codes};
+
+    my $option_codes = $self->option_codes;
+
+    my %option_definitions;
+
+    for (split /,/, $vehicle_options) {
+        $option_definitions{$_} = $option_codes->{$_};
+    }
+
+    print Dumper \%option_definitions;
 }
 sub vehicle_id {
     return $_[0]->summary->{vehicle_id};
@@ -764,10 +775,22 @@ Example:
 
 Returns a bool whether your vehicle is in service mode or not.
 
-=head2 option_codes
+=head2 options
 
-Returns a comma-delimited string of option codes of the options that are enabled
-on your vehicle.
+B<NOTE>: The Tesla API, since 2019, has been returning wrong information about
+vehicle option codes, so do not trust them. For my Model X, I'm getting
+returned option codes for a Model 3. Several people I've spoken to about the
+issue see the same thing for their Model S.
+
+Returns a hash reference of the options available on your vehicle. The key is
+the option code, and the value is the option description.
+
+    {
+        'APH3' => 'Autopilot 2.5 Hardware',
+        'RENA' => 'Region: North America',
+        'MR31' => 'Uplevel Mirrors',
+        'GLFR' => 'Final Assembly Fremont',
+    }
 
 =head2 vehicle_id
 

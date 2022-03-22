@@ -8,8 +8,7 @@ use Tesla::Vehicle;
 my $x = Tesla::Vehicle->new;
 
 
-say $x->online;
-say $x->wake;
+say $x->options;
 
 #say $x->trunk_rear_actuate;
 #say $x->trunk_rear;
