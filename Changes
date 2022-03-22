@@ -1,5 +1,8 @@
 Revision history for Tesla-Vehicle
 
+0.06 UNREL
+    -
+
 0.05    2022-03-22
     - Fix issue where instead of timing out the wake() call properly, we were
       repeatedly displaying the timeout notice, then doing nothing which
