@@ -1,13 +1,12 @@
 Revision history for Tesla-Vehicle
 
 0.05 UNREL
-    -
-
-0.04    2022-03-21
-    - Added SYNOPSIS
     - Fix issue where instead of timing out the wake() call properly, we were
       repeatedly displaying the timeout notice, then doing nothing which
       resulted in an uninit warning being thrown (fixes #4)
+
+0.04    2022-03-21
+    - Added SYNOPSIS
 
 0.03    2022-03-20
     - Added IMPORTANT section in POD to point to Tesla::API's caching
