@@ -93,7 +93,7 @@ sub list {
 
     return $self->{vehicles} if $self->{vehicles};
 
-    my $vehicles = $self->api('VEHICLE_LIST');
+    my $vehicles = $self->api(endpoint => 'VEHICLE_LIST');
 
     for (@$vehicles) {
         $self->{data}{vehicles}{$_->{id}} = $_->{display_name};
@@ -111,7 +111,7 @@ sub name {
 sub data {
     my ($self) = @_;
     $self->_online_check;
-    return $self->api('VEHICLE_DATA', $self->id);
+    return $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
 }
 sub state {
     my ($self) = @_;
@@ -119,7 +119,7 @@ sub state {
     return $self->data->{vehicle_state};
 }
 sub summary {
-    return $_[0]->api('VEHICLE_SUMMARY', $_[0]->id);
+    return $_[0]->api(endpoint => 'VEHICLE_SUMMARY', id => $_[0]->id);
 }
 sub charge_state {
     my ($self) = @_;
@@ -230,7 +230,7 @@ sub charger_voltage {
 sub charging_sites_nearby {
     my ($self) = @_;
     $self->_online_check;
-    my $sites = $self->api('NEARBY_CHARGING_SITES', $self->id);
+    my $sites = $self->api(endpoint => 'NEARBY_CHARGING_SITES', id => $self->id);
 
     my $super_chargers = $sites->{superchargers};
     my $destination_chargers = $sites->{destination_charging};
@@ -320,7 +320,7 @@ sub bioweapon_mode_toggle {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('HVAC_BIOWEAPON_MODE', $self->id);
+    my $return = $self->api(endpoint => 'HVAC_BIOWEAPON_MODE', id => $self->id);
 
     $self->api_cache_clear;
 
@@ -333,7 +333,7 @@ sub bioweapon_mode_toggle {
 sub climate_on {
     my ($self) = @_;
     $self->_online_check;
-    my $return = $self->api('CLIMATE_ON', $self->id);
+    my $return = $self->api(endpoint => 'CLIMATE_ON', id => $self->id);
 
     $self->api_cache_clear;
 
@@ -347,7 +347,7 @@ sub climate_off {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('CLIMATE_OFF', $self->id);
+    my $return = $self->api(endpoint => 'CLIMATE_OFF', id => $self->id);
 
     $self->api_cache_clear;
 
@@ -361,7 +361,7 @@ sub climate_defrost_max {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('MAX_DEFROST', $self->id);
+    my $return = $self->api(endpoint => 'MAX_DEFROST', id => $self->id);
 
     $self->api_cache_clear;
 
@@ -376,7 +376,7 @@ sub doors_lock {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('LOCK', $self->id);
+    my $return = $self->api(endpoint => 'LOCK', id => $self->id);
 
     $self->api_cache_clear;
 
@@ -390,7 +390,7 @@ sub doors_unlock {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('UNLOCK', $self->id);
+    my $return = $self->api(endpoint => 'UNLOCK', id => $self->id);
 
     $self->api_cache_clear;
 
@@ -405,7 +405,7 @@ sub horn_honk {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('HONK_HORN', $self->id);
+    my $return = $self->api(endpoint => 'HONK_HORN', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't honk the horn: '$return->{reason}'\n";
@@ -418,7 +418,7 @@ sub lights_flash {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('FLASH_LIGHTS', $self->id);
+    my $return = $self->api(endpoint => 'FLASH_LIGHTS', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't flash the exterior lights: '$return->{reason}'\n";
@@ -431,7 +431,7 @@ sub media_playback_toggle {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('MEDIA_TOGGLE_PLAYBACK', $self->id);
+    my $return = $self->api(endpoint => 'MEDIA_TOGGLE_PLAYBACK', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't toggle audio playback: '$return->{reason}'\n";
@@ -443,7 +443,7 @@ sub media_track_next {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('MEDIA_NEXT_TRACK', $self->id);
+    my $return = $self->api(endpoint => 'MEDIA_NEXT_TRACK', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't skip to next audio track: '$return->{reason}'\n";
@@ -455,7 +455,7 @@ sub media_track_previous {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('MEDIA_PREVIOUS_TRACK', $self->id);
+    my $return = $self->api(endpoint => 'MEDIA_PREVIOUS_TRACK', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't skip to previous audio track: '$return->{reason}'\n";
@@ -467,7 +467,7 @@ sub media_volume_down {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('MEDIA_VOLUME_DOWN', $self->id);
+    my $return = $self->api(endpoint => 'MEDIA_VOLUME_DOWN', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't turn volume down: '$return->{reason}'\n";
@@ -479,7 +479,7 @@ sub media_volume_up {
     my ($self) = @_;
     $self->_online_check;
 
-    my $return = $self->api('MEDIA_VOLUME_UP', $self->id);
+    my $return = $self->api(endpoint => 'MEDIA_VOLUME_UP', id => $self->id);
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't turn volume up: '$return->{reason}'\n";
@@ -494,9 +494,9 @@ sub trunk_front_actuate {
     $self->_online_check;
 
     my $return = $self->api(
-        'ACTUATE_TRUNK',
-        $self->id,
-        { which_trunk => 'front' }
+        endpoint    => 'ACTUATE_TRUNK',
+        id          => $self->id,
+        api_params  => { which_trunk => 'front' }
     );
 
     $self->api_cache_clear;
@@ -513,9 +513,9 @@ sub trunk_rear_actuate {
     $self->_online_check;
 
     my $return = $self->api(
-        'ACTUATE_TRUNK',
-        $self->id,
-        { which_trunk => 'rear' }
+        endpoint    => 'ACTUATE_TRUNK',
+        id          => $self->id,
+        api_params  => { which_trunk => 'rear' }
     );
 
     $self->api_cache_clear;
@@ -532,7 +532,7 @@ sub wake {
 
     if (! $self->online) {
 
-        $self->api('WAKE_UP', $self->id);
+        $self->api(endpoint => 'WAKE_UP', id => $self->id);
 
         my $wakeup_called_at = time;
         my $wake_interval = WAKE_INTERVAL;

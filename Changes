@@ -2,6 +2,9 @@ Revision history for Tesla-Vehicle
 
 0.06 UNREL
     - Return instead of print the return value of options()
+    - Bump prereq of Tesla::API to 0.09; its api() method now requires all
+      parameters (endpoint, id, api_params thus far) to be sent in as a hash
+      as opposed to positional scalars
 
 0.05    2022-03-22
     - Fix issue where instead of timing out the wake() call properly, we were
