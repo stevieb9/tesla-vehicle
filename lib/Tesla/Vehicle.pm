@@ -529,16 +529,16 @@ sub wake {
 
         while (! $self->online) {
             select(undef, undef, undef, $wake_interval);
-            if ($wakeup_called_at + WAKE_TIMEOUT < time) {
+            if ($wakeup_called_at + WAKE_TIMEOUT - $wake_interval < time) {
                 printf(
                     "\nVehicle with ID %d couldn't be woken up within %d " .
-                    "seconds.\n\n",
+                    "seconds. Exiting...\n\n",
                     $self->id,
                     WAKE_TIMEOUT
                 );
-
-                $wake_interval *= WAKE_BACKOFF;
+                exit;
             }
+            $wake_interval *= WAKE_BACKOFF;
         }
     }
 }

@@ -5,12 +5,11 @@ use feature 'say';
 use Data::Dumper;
 use Tesla::Vehicle;
 
-my $x = Tesla::Vehicle->new(auto_wake => 1);
+my $x = Tesla::Vehicle->new;
 
 
-#say $x->bioweapon_mode_toggle;
-
-say $x->bioweapon_mode;
+say $x->online;
+say $x->wake;
 
 #say $x->trunk_rear_actuate;
 #say $x->trunk_rear;
