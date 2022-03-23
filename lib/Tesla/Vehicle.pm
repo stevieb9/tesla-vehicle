@@ -908,17 +908,6 @@ Turns up the audio volume by one notch.
 Returns true on success, false on failure.
 
 I<NOTE>: Most often reason for fail is "User Not Present".
-=head2 wake
-
-Wakes up an offline Tesla vehicle.
-
-Most Tesla API calls related to your vehicle require the vehicle to be in an
-online state. If C<auto_wake()> isn't set and you attempt to make an API call
-that requires the vehicle online, we will print a warning and exit.
-
-Use this method to wake the vehicle up manually.
-
-Default wake timeout is 30 seconds, and is set in the constant C<WAKE_TIMEOUT>.
 
 =head2 trunk_rear_actuate
 
