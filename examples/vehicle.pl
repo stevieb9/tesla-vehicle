@@ -12,9 +12,9 @@ printf(
 );
 
 printf(
-    "My car is in gear %s and is currently going %d MPH and my odometer is %d\n",
-    $car->gear,
-    $car->speed,
+    "My car is in gear %s and is currently going %s MPH and my odometer is %d\n",
+    $car->gear // "none",
+    $car->speed // "none",
     $car->odometer
 );
 
@@ -34,11 +34,11 @@ printf(
 );
 
 printf(
-    "My battery is at %d%%, and is %s charging at %.2f volts pulling %.2f Amps\n",
+    "My battery is at %d%%, and is %s charging at %.2f volts pulling %s Amps\n",
     $car->battery_level,
     $car->charging_state ? 'currently' : 'not',
     $car->charger_voltage,
-    $car->charge_actual_current
+    $car->charge_actual_current // "none"
 );
 
 if ($car->battery_level >= $car->charge_limit_soc) {
