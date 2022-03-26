@@ -527,6 +527,26 @@ sub trunk_rear_actuate {
     return $return->{result};
 }
 
+sub set_charge_limit {
+    my ($self, $percent) = @_;
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'CHANGE_CHARGE_LIMIT',
+        id          => $self->id,
+        api_params  => { percent => $percent }
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't set_charge_limit: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
 sub wake {
     my ($self) = @_;
 
