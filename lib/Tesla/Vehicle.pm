@@ -128,6 +128,10 @@ sub data {
                 last;
             }
         }
+
+        if (! defined $data->{drive_state}{shift_state}) {
+            $data->{drive_state}{shift_state} = 'U';
+        }
     }
 
     return $data;
@@ -1113,6 +1117,10 @@ vehicle.
 Returns a single alpha character representing the gear the vehicle is in.
 
 One of C<P> for parked, C<N> for Neutral, C<D> for Drive and C<R> for reverse.
+
+This value is very often retured as undefined by Tesla, so a custom value of
+C<U> is returned if the Tesla API doesn't return a valid value after
+C<API_RETRIES> attempts to get one.
 
 =head2 gps_as_of
 

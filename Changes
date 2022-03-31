@@ -11,6 +11,8 @@ Revision history for Tesla-Vehicle
     - Add Tesla API retries (API_RETRIES) if 'gear' is undefined (closes #1)
     - Add DEBUG_TESLA_API_RETRY to output info about API retries
     - If a vehicle is parked, 'speed' is undefined, so we return 0 in this case
+    - Add new 'gear' return value, 'U', for when we've retried the API call but
+      still haven't got a defined value
 
 0.06    2022-03-23
     - Return instead of print the return value of options()
