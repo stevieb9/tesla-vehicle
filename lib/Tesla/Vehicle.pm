@@ -117,15 +117,16 @@ sub data {
     my $data = $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
 
     if (ref $data ne 'HASH') {
-        warn "Tesla API timed out. Please retry the call\n";
+        CORE::warn "Tesla API timed out. Please retry the call\n";
         return {};
     }
 
     if (! defined $data->{drive_state}{shift_state}) {
-        $self->api_cache_clear;
 
         for (1 .. API_RETRIES) {
             print "API retry attempt $_\n" if DEBUG_API_RETRY;
+
+            $self->api_cache_clear;
 
             $data = $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
 
