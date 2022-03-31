@@ -116,6 +116,11 @@ sub data {
 
     my $data = $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
 
+    if (ref $data ne 'HASH') {
+        warn "Tesla API timed out. Please retry the call\n";
+        return {};
+    }
+
     if (! defined $data->{drive_state}{shift_state}) {
         $self->api_cache_clear;
 
