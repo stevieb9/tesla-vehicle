@@ -316,6 +316,30 @@ sub temperature_setting_passenger {
 
 # Command Related Methods
 
+sub charge_limit_set {
+    my ($self, $percent) = @_;
+
+    if (! defined $percent || $percent !~ /^\d+$/ || $percent > 100 || $percent < 1) {
+        croak "charge_limit_set() requires a percent integer between 1 and 100";
+    }
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'CHANGE_CHARGE_LIMIT',
+        id          => $self->id,
+        api_params  => { percent => $percent }
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't set charge limit: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
 sub bioweapon_mode_toggle {
     my ($self) = @_;
     $self->_online_check;
@@ -483,26 +507,6 @@ sub media_volume_up {
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't turn volume up: '$return->{reason}'\n";
-    }
-
-    return $return->{result};
-}
-
-sub set_charge_limit {
-    my ($self, $percent) = @_;
-
-    $self->_online_check;
-
-    my $return = $self->api(
-        endpoint    => 'CHANGE_CHARGE_LIMIT',
-        id          => $self->id,
-        api_params  => { percent => $percent }
-    );
-
-    $self->api_cache_clear;
-
-    if (! $return->{result} && $self->warn) {
-        print "Couldn't set_charge_limit: '$return->{reason}'\n";
     }
 
     return $return->{result};
@@ -929,7 +933,7 @@ Returns true on success, false on failure.
 
 I<NOTE>: Most often reason for fail is "User Not Present".
 
-=head2 set_charge_limit($percent)
+=head2 charge_limit_set($percent)
 
 Sets the limit in percent the battery can be charged to.
 

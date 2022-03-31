@@ -7,6 +7,7 @@ Revision history for Tesla-Vehicle
       @ankratochvil !)
     - Add POD for set_charge_limit()
     - Update example shebang lines to use /usr/bin/env perl
+    - Renamed set_charge_limit() to charge_limit_set()
 
 0.06    2022-03-23
     - Return instead of print the return value of options()
