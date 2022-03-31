@@ -11,7 +11,7 @@ my $x = Tesla::Vehicle->new(auto_wake => 1);
 
 #print Dumper $x->data;
 
-say $x->api_cache_persist(1);
+$x->api_cache_persist(1);
 
 printf(
     "g: %s, s: %d\n",
@@ -19,5 +19,5 @@ printf(
     $x->speed
 );
 
-say $x->api_cache_persist(0);
+$x->api_cache_persist(0);
 
