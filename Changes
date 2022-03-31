@@ -1,7 +1,12 @@
 Revision history for Tesla-Vehicle
 
 0.07 UNREL
-    -
+    - Added PR#7; Add set_charge_limit() and examples/control.pl (Thanks
+      @ankratochvil !)
+    - Added PR#5; Update example scripts with shebang line (Thanks
+      @ankratochvil !)
+    - Add POD for set_charge_limit()
+    - Update example shebang lines to use /usr/bin/env perl
 
 0.06    2022-03-23
     - Return instead of print the return value of options()
