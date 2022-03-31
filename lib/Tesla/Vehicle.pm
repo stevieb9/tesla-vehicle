@@ -169,7 +169,6 @@ sub trunk_front {
 sub trunk_rear {
     return $_[0]->data->{vehicle_state}{rt};
 }
-
 sub user_present {
     return $_[0]->data->{vehicle_state}{is_user_present};
 }
