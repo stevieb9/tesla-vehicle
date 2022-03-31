@@ -8,6 +8,9 @@ Revision history for Tesla-Vehicle
     - Add POD for set_charge_limit()
     - Update example shebang lines to use /usr/bin/env perl
     - Renamed set_charge_limit() to charge_limit_set()
+    - Add Tesla API retries (API_RETRIES) if 'gear' is undefined (closes #1)
+    - Add DEBUG_TESLA_API_RETRY to output info about API retries
+    - If a vehicle is parked, 'speed' is undefined, so we return 0 in this case
 
 0.06    2022-03-23
     - Return instead of print the return value of options()

@@ -9,5 +9,12 @@ use Tesla::Vehicle;
 
 my $x = Tesla::Vehicle->new(auto_wake => 1);
 
-say $x->gear;
+#print Dumper $x->data;
+
+printf(
+    "g: %s, s: %d\n",
+    $x->gear,
+    $x->speed
+);
+
 

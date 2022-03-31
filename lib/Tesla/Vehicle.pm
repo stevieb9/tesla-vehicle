@@ -11,7 +11,9 @@ use Data::Dumper;
 our $VERSION = '0.07';
 
 use constant {
-    DEBUG_ONLINE    => 0,
+    DEBUG_ONLINE    => $ENV{TESLA_DEBUG_ONLINE},
+    DEBUG_API_RETRY => $ENV{TESLA_DEBUG_API_RETRY},
+    API_RETRIES     => 5,
     WAKE_TIMEOUT    => 30,
     WAKE_INTERVAL   => 2,
     WAKE_BACKOFF    => 1.15
@@ -111,7 +113,24 @@ sub name {
 sub data {
     my ($self) = @_;
     $self->_online_check;
-    return $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
+
+    my $data = $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
+
+    if (! defined $data->{drive_state}{shift_state}) {
+        $self->api_cache_clear;
+
+        for (1 .. API_RETRIES) {
+            print "API retry attempt $_\n" if DEBUG_API_RETRY;
+
+            $data = $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
+
+            if (defined $data->{drive_state}{shift_state}) {
+                last;
+            }
+        }
+    }
+
+    return $data;
 }
 sub state {
     my ($self) = @_;
@@ -194,7 +213,7 @@ sub power {
     return $_[0]->data->{drive_state}{power};
 }
 sub speed {
-    return $_[0]->data->{drive_state}{speed};
+    return $_[0]->data->{drive_state}{speed} // 0;
 }
 
 # Charge State Methods
