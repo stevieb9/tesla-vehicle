@@ -183,6 +183,9 @@ sub dashcam {
 sub locked {
     return $_[0]->data->{vehicle_state}{locked};
 }
+sub sentry {
+    return $_[0]->data->{vehicle_state}{sentry_mode};
+}
 sub online {
     my $status = $_[0]->summary->{state};
     return $status eq 'online' ? 1 : 0;
@@ -241,6 +244,22 @@ sub charge_amps {
 sub charge_actual_current {
     return $_[0]->data->{charge_state}{charge_actual_current} // 0;
 }
+sub charge_current_request {
+    return $_[0]->data->{charge_state}{charge_current_request};
+}
+sub charge_current_request_max {
+    return $_[0]->data->{charge_state}{charge_current_request_max};
+}
+sub charger_phases {
+    my $retval = $_[0]->data->{charge_state}{charger_phases};
+    return $retval if !defined $retval || $retval == 1;
+    if ($retval != 2) {
+	print "Unknown number of phases $retval\n";
+	return undef;
+    }
+    return 3 if $_[0]->data->{vehicle_config}{eu_vehicle};
+    return 2;
+}
 sub charge_limit_soc {
     return $_[0]->data->{charge_state}{charge_limit_soc};
 }
@@ -288,6 +307,12 @@ sub charging_state {
     }
 sub minutes_to_full_charge {
     return $_[0]->data->{charge_state}{minutes_to_full_charge};
+}
+sub scheduled_charging {
+    my $mode = $_[0]->data->{charge_state}{scheduled_charging_mode};
+    return undef if $mode eq "Off";
+    print "Unknown scheduled_charging_mode $mode\n" if $mode ne "StartAt";
+    return $_[0]->data->{charge_state}{scheduled_charging_start_time_minutes};
 }
 
 # Climate State Methods
@@ -346,6 +371,15 @@ sub temperature_setting_passenger {
     return $_[0]->data->{climate_state}{passenger_temp_setting};
 }
 
+sub preconditioning {
+    return undef if !$_[0]->data->{charge_state}{preconditioning_enabled};
+    return ($_[0]->data->{charge_state}{scheduled_departure_time_minutes} - 15) % (24*60);
+}
+
+sub charge_history {
+    return $_[0]->api(endpoint => 'VEHICLE_CHARGE_HISTORY', id => $_[0]->id);
+}
+
 # Command Related Methods
 
 sub charge_limit_set {
@@ -367,6 +401,147 @@ sub charge_limit_set {
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't set charge limit: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub charge_amps_set {
+    my ($self, $amps) = @_;
+
+    if (! defined $amps || $amps !~ /^\d+$/) {
+        croak "charge_amps_set() requires an amps integer";
+    }
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'CHARGING_AMPS',
+        id          => $self->id,
+        api_params  => { charging_amps => $amps }
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't set charging amps: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub charge_on {
+    my ($self) = @_;
+    $self->_online_check;
+    my $return = $self->api(endpoint => 'START_CHARGE', id => $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn charge on: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub charge_off {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api(endpoint => 'STOP_CHARGE', id => $self->id);
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn charge off: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub scheduled_charging_set {
+    my ($self, $minutes) = @_;
+
+    if (defined $minutes && ($minutes < 0 || $minutes >= 24 * 60)) {
+        croak "scheduled_charging_set() requires minutes integer between 0 and 24*60-1";
+    }
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'SCHEDULED_CHARGING',
+        id          => $self->id,
+        api_params  => {
+                         enable => defined $minutes ? "true" : "false",
+                         time => $minutes // 0,
+                       },
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't schedule charging: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub preconditioning_set {
+    my ($self, $minutes) = @_;
+
+    if (defined $minutes && ($minutes < 0 || $minutes >= 24 * 60)) {
+        croak "preconditioning_set() requires minutes integer between 0 and 24*60-1";
+    }
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'SCHEDULED_DEPARTURE',
+        id          => $self->id,
+        api_params  => {
+                         enable => defined $minutes ? "true" : "false",
+                         preconditioning_enabled => defined $minutes ? "true" : "false",
+                         departure_time => !defined $minutes ? 0 : ($minutes + 15) % (24*60),
+                         preconditioning_weekdays_only => "false",
+                         off_peak_charging_enabled => "false",
+                         off_peak_charging_weekdays_only => "false",
+                         end_off_peak_time => 0,
+                       },
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't schedule preconditioning: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub temperatures_set {
+    my ($self, $celsius) = @_;
+
+    if (!defined $celsius || $celsius < $self->climate_state->{min_avail_temp}
+                          || $celsius > $self->climate_state->{max_avail_temp}) {
+        croak "temperatures_set() requires temperature between"
+            ." ".$self->climate_state->{min_avail_temp}
+            ." and ".$self->climate_state->{max_avail_temp};
+    }
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'CHANGE_CLIMATE_TEMPERATURE_SETTING',
+        id          => $self->id,
+        api_params  => {
+                         driver_temp => $celsius,
+                         passenger_temp => $celsius,
+                       },
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't set temperatures: '$return->{reason}'\n";
     }
 
     return $return->{result};
@@ -457,6 +632,43 @@ sub doors_unlock {
     return $return->{result};
 }
 
+sub sentry_on {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'SET_SENTRY_MODE',
+        id          => $self->id,
+        api_params  => { on => "true" },
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn on the sentry: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+sub sentry_off {
+    my ($self) = @_;
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'SET_SENTRY_MODE',
+        id          => $self->id,
+        api_params  => { on => "false" },
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't turn off the sentry: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
 sub horn_honk {
     my ($self) = @_;
     $self->_online_check;
@@ -478,6 +690,32 @@ sub lights_flash {
 
     if (! $return->{result} && $self->warn) {
         print "Couldn't flash the exterior lights: '$return->{reason}'\n";
+    }
+
+    return $return->{result};
+}
+
+sub windows_set {
+    my ($self, $state) = @_;
+
+    if (!defined $state || ($state != 0 && $state != 1)) {
+        croak "windows_set() requires state 0 (close) or 1 (vent)";
+    }
+
+    $self->_online_check;
+
+    my $return = $self->api(
+        endpoint    => 'WINDOW_CONTROL',
+        id          => $self->id,
+        api_params  => {
+                         command => $state ? "vent" : "close",
+                       },
+    );
+
+    $self->api_cache_clear;
+
+    if (! $return->{result} && $self->warn) {
+        print "Couldn't control windows: '$return->{reason}'\n";
     }
 
     return $return->{result};
@@ -943,6 +1181,23 @@ Example warning:
 
     Couldn't turn volume up: 'user_not_present'
 
+=head2 preconditioning_set($minutes)
+
+Set time when car should finish conditioning. Time is specified in minutes
+since midnight. Tesla normally conditions 15 minutes before the specified time,
+this API already compensates it so specify the real time when the conditioning
+should finish. The conditioning is unplanned if the parameter is undefined.
+
+=head2 temperatures_set($celsius)
+
+Set temperature for both driver and passenger seats. The C<$celsius> parameter
+must be set. One cannot set different temperature for driver and passenger.
+
+Returns true on success.
+
+Follow up with calls to C<temperature_setting_driver()> and
+C<temperature_setting_passenger()> to verify.
+
 =head2 bioweapon_mode_toggle
 
 Toggles the HVAC Bio Weapon mode on or off.
@@ -981,6 +1236,18 @@ Unlocks the car doors. Returns true on success.
 
 Follow up with a call to C<locked()> to verify.
 
+=head2 sentry_on
+
+Turn on car sentry mode. Returns true on success.
+
+Follow up with a call to C<sentry()> to verify.
+
+=head2 sentry_off
+
+Turn off car sentry mode. Returns true on success.
+
+Follow up with a call to C<sentry()> to verify.
+
 =head2 horn_honk
 
 Honks the horn once. Returns true on success.
@@ -988,6 +1255,13 @@ Honks the horn once. Returns true on success.
 =head2 lights_flash
 
 Flashes the exterior lights of the vehicle.
+
+Returns true on success.
+
+=head2 windows_set
+
+Close or vent all windows. Value 1 means vent them all, value 0 means close them all.
+It is not possible to open the windows.
 
 Returns true on success.
 
@@ -1038,6 +1312,27 @@ Sets the limit in percent the battery can be charged to.
 Returns true if the operation was successful, and false if not.
 
 Follow up with a call to C<battery_level()>.
+
+=head2 charge_on
+
+Turns the battery charging on up to the last value of charge_limit_set.
+
+Returns true on success.
+
+Follow up with a call to C<charging_state()> to verify.
+
+=head2 charge_off
+
+Turns the battery charging off.
+
+Returns true on success.
+
+Follow up with a call to C<charging_state()> to verify.
+
+=head2 scheduled_charging_set($minutes)
+
+Schedule charging to start at C<$minutes> since midnight local time.
+Cancel scheduled charging if C<$minutes> is undefined.
 
 =head2 trunk_rear_actuate
 
@@ -1152,6 +1447,10 @@ Returns a string of the state of the dashcam (eg. "Recording").
 
 Returns true if the doors are locked, false if not.
 
+=head2 sentry
+
+Returns true if the car sentry mode is on, false if not.
+
 =head2 online
 
 Returns true if the vehicle is online and ready to communicate, and false if
@@ -1245,6 +1544,20 @@ current charger connection.
 Returns a float indicating how many Amps are actually being drawn through the
 charger.
 
+=head2 charge_current_request
+
+Returns an integer indicating number of amperes to charge the car.
+
+=head2 charge_current_request_max
+
+Returns an integer indicating maximum number of amperes supported for charging
+the car.
+
+=head2 charger_phases
+
+Returns an integer 1, 2 or 3 for number of phases of a connected charger.
+Returns undef if no charging is happening.
+
 =head2 charge_limit_soc
 
 Returns an integer stating what percentage of battery level you've indicated
@@ -1307,6 +1620,11 @@ Returns a string that identifies the state of the vehicle's charger. Eg.
 Returns an integer containing the estimated number of minutes to fully charge
 the batteries, taking into consideration voltage level, Amps requested and
 drawn etc.
+
+=head2 scheduled_charging
+
+Returns an integer representing time in minutes since midnight local time to
+start charging.  Returns undef if no charging is scheduled.
 
 =head1 CLIMATE STATE ATTRIBUTE METHODS
 
@@ -1377,6 +1695,13 @@ What the driver's side temperature setting is set to.
 =head2 temperature_setting_passenger
 
 What the passenger's side temperature setting is set to.
+
+=head2 preconditioning
+
+When car should finish its conditioning. If none is set return undef.
+Tesla normally conditions 15 minutes before the specified time, this API
+already compensates it so the returned time is the real time when the
+conditioning will finish.
 
 =head1 AUTHOR
 

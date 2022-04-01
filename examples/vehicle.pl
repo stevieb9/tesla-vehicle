@@ -62,3 +62,10 @@ printf(
     $car->temperature_outside,
     $car->is_climate_on ? 'on' : 'off'
 );
+
+my $windows=join ", ",map {0=>"closed",1=>"venting",2=>"opened"}->{$_},map $car->state->{"${_}_window"},qw(fd fp rd rp);
+$windows=~s/^([^,]+)(?:, \1)+$/all $1/;
+printf(
+    "Windows are %s.\n",
+    $windows
+);
