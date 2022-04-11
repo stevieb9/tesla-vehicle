@@ -12,7 +12,7 @@ printf(
 
 my $gear = $car->gear;
 my $speed = $car->speed;
-my $odo = $car->odo;
+my $odo = $car->odometer;
 
 printf(
     "My car is in gear %s and is currently going %d MPH and my odometer is %d\n",

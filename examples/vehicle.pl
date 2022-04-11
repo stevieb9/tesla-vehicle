@@ -9,8 +9,9 @@ use Tesla::Vehicle;
 my $car = Tesla::Vehicle->new(auto_wake => 1);
 
 printf(
-    "My Tesla account has my car registered with the name '%s'.\n",
-    $car->name
+    "My Tesla account has my car registered with the name '%s' has ID %d.\n",
+    $car->name,
+    $car->id
 );
 
 printf(

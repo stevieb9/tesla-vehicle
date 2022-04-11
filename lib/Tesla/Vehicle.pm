@@ -235,7 +235,7 @@ sub charge_amps {
     return $_[0]->data->{charge_state}{charge_amps};
 }
 sub charge_actual_current {
-    return $_[0]->data->{charge_state}{charge_actual_current};
+    return $_[0]->data->{charge_state}{charge_actual_current} // 0;
 }
 sub charge_limit_soc {
     return $_[0]->data->{charge_state}{charge_limit_soc};
