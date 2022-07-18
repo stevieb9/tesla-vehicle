@@ -9,6 +9,15 @@ use Tesla::Vehicle;
 my $car = Tesla::Vehicle->new(auto_wake => 1);
 
 printf(
+    "My latitude is %f, longitide is %f, my heading is %d degrees and its using %.2f kWh/mile\n",
+    $car->latitude,
+    $car->longitude,
+    $car->heading,
+    $car->power
+);
+exit;
+
+printf(
     "My Tesla account has my car registered with the name '%s' has ID %d.\n",
     $car->name,
     $car->id
@@ -19,14 +28,6 @@ printf(
     $car->gear,
     $car->speed,
     $car->odometer
-);
-
-printf(
-    "My latitude is %f, longitide is %f, my heading is %d degrees and its using %.2f kWh/mile\n",
-    $car->latitude,
-    $car->longitude,
-    $car->heading,
-    $car->power
 );
 
 printf(
