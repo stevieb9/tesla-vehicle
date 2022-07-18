@@ -1,6 +1,6 @@
 Revision history for Tesla-Vehicle
 
-0.08 UNREL
+0.08    2022-07-18
     - Return 0 if charge_actual_current() is undef
     - Bump prereq of Tesla::API for changes addressing Tesla API timeout issues
     - Added address(); converts lat/lon into human readable street address
