@@ -10,7 +10,7 @@ use Data::Dumper;
 use HTTP::Tiny;
 use JSON;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use constant {
     DEBUG_ONLINE    => $ENV{TESLA_DEBUG_ONLINE},
