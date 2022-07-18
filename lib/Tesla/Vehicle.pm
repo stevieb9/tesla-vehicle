@@ -619,10 +619,10 @@ sub address {
         format => 'json',
     };
 
-    my $uri_params = $self->_address_web_client()->www_form_urlencode($geo_data);
+    my $uri_params = $self->_address_web_client->www_form_urlencode($geo_data);
     my $uri = "${\URL_GEOCODING}?$uri_params";
 
-    my $geocode_response = $self->_address_web_client()->get($uri);
+    my $geocode_response = $self->_address_web_client->get($uri);
 
     if ($geocode_response->{success}) {
         my $json_geocode_data = $geocode_response->{content};
