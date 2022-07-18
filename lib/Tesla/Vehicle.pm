@@ -22,10 +22,6 @@ use constant {
     WAKE_BACKOFF    => 1.15
 };
 
-# HTTP::Tiny client object for doing reverse geocoding of vehicle location
-
-my $address_web_client;
-
 # Object Related
 
 sub new {
