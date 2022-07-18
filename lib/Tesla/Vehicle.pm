@@ -904,7 +904,7 @@ Returns an alpha-numeric string that contains the actual Vehicle Identification
 Number of your vehicle. This value is located on a stamped plate on the driver's
 side bottom on the outside of your windshield.
 
-=head1 LOCATION METHODS
+=head1 VEHICLE LOCATION METHODS
 
 Alongside L</latitude> and L</longitude>, we provide a convenience method to
 return human readable address location data for your vehicle.
@@ -942,7 +942,7 @@ We will also print to C<STDOUT> the reason for the failure if one occurred.
 This warning includes the message we received from Tesla.
 
 You can disable these warnings from being displayed by sending in a false value
-to C<warn()>, or instantiate the object with C<new(warn => 0)>.
+to C<warn()>, or instantiate the object with C<< new(warn => 0) >>.
 
 Example warning:
 
