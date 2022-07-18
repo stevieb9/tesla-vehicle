@@ -613,12 +613,9 @@ sub wake {
 sub address {
     my ($self) = @_;
 
-    my $lat = $self->latitude;
-    my $lon = $self->longitude;
-
     my $geo_data = {
-        lat => $lat,
-        lon => $lon,
+        lat => $self->latitude,
+        lon => $self->longitude,
         format => 'json',
     };
 
