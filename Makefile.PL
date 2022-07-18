@@ -30,6 +30,8 @@ my %WriteMakefileArgs = (
         'Test::More' => '0',
     },
     PREREQ_PM => {
+        'HTTP::Tiny'    => 0,
+        'JSON'          => 0,
         'Tesla::API'    => '0.10',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
