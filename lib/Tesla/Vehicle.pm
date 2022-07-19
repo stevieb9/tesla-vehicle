@@ -7,7 +7,6 @@ use parent 'Tesla::API';
 
 use Carp qw(croak confess);
 use Data::Dumper;
-use HTTP::Tiny;
 use JSON;
 
 our $VERSION = '0.09';
@@ -613,19 +612,19 @@ sub wake {
 sub address {
     my ($self) = @_;
 
-    my $geo_data = {
+    my $url_params = {
         lat => $self->latitude,
         lon => $self->longitude,
         format => 'json',
     };
 
-    my $uri_params = $self->_address_web_client->www_form_urlencode($geo_data);
-    my $uri = "${\URL_GEOCODING}?$uri_params";
+    my $uri = $self->uri(URL_GEOCODING);
+    $uri->query_form($url_params);
 
-    my $geocode_response = $self->_address_web_client->get($uri);
+    my $geocode_response = $self->mech->get($uri);
 
-    if ($geocode_response->{success}) {
-        my $json_geocode_data = $geocode_response->{content};
+    if ($geocode_response->is_success) {
+        my $json_geocode_data = $geocode_response->content;
         my $geocode_data = decode_json($json_geocode_data);
 
         my $address_data = $geocode_data->{address};
@@ -639,15 +638,6 @@ sub address {
 
 # Private Methods
 
-sub _address_web_client {
-    my ($self) = @_;
-
-    if (! $self->{address_web_client}) {
-        $self->{address_web_client} = HTTP::Tiny->new;
-    }
-
-    return $self->{address_web_client};
-}
 sub _id {
     my ($self, $id) = @_;
 
