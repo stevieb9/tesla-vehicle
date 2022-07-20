@@ -3,6 +3,7 @@ Revision history for Tesla-Vehicle
 0.09 UNREL
     - Bump prereq of Tesla::API to 1.02 for changes that isolate the API
       cache to object instances of that library
+    - Add constants for geocoding API request attributes
 
 0.08    2022-07-18
     - Return 0 if charge_actual_current() is undef

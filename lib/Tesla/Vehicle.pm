@@ -12,13 +12,15 @@ use JSON;
 our $VERSION = '0.09';
 
 use constant {
-    DEBUG_ONLINE    => $ENV{TESLA_DEBUG_ONLINE},
-    DEBUG_API_RETRY => $ENV{TESLA_DEBUG_API_RETRY},
-    API_RETRIES     => 5,
-    URL_GEOCODING   => 'https://nominatim.openstreetmap.org/reverse',
-    WAKE_TIMEOUT    => 30,
-    WAKE_INTERVAL   => 2,
-    WAKE_BACKOFF    => 1.15
+    DEBUG_ONLINE        => $ENV{TESLA_DEBUG_ONLINE},
+    DEBUG_API_RETRY     => $ENV{TESLA_DEBUG_API_RETRY},
+    API_RETRIES         => 5,
+    GEOCODING_URL       => 'https://nominatim.openstreetmap.org/reverse',
+    GEOCODING_ZOOM      => 18, # House level
+    GEOCODING_FORMAT    => 'jsonv2',
+    WAKE_TIMEOUT        => 30,
+    WAKE_INTERVAL       => 2,
+    WAKE_BACKOFF        => 1.15
 };
 
 # Object Related
@@ -613,12 +615,13 @@ sub address {
     my ($self) = @_;
 
     my $url_params = {
-        lat => $self->latitude,
-        lon => $self->longitude,
-        format => 'json',
+        lat     => $self->latitude,
+        lon     => $self->longitude,
+        format  => GEOCODING_FORMAT,
+        zoom    => GEOCODING_ZOOM,
     };
 
-    my $uri = $self->uri(URL_GEOCODING);
+    my $uri = $self->uri(GEOCODING_URL);
     $uri->query_form($url_params);
 
     my $geocode_response = $self->mech->get($uri);
@@ -897,6 +900,11 @@ return human readable address location data for your vehicle.
 Takes no parameters. If the L</latitude> and L</longitude> information for the
 vehicle is available, we will return a hash reference containing the street
 address information of the vehicle.
+
+The geocode translation is done through the
+L<Nominatim Geocode API|https://nominatim.org/release-docs/develop/api/Reverse>.
+
+It uses Open Street Map to gather its information.
 
 The return hash reference may have additional keys depending on the specific
 location.
