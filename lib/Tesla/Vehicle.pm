@@ -926,7 +926,7 @@ Example return:
 
 =head1 COMMAND METHODS
 
-All command methods return a true value (C<1>)if the operation was successful,
+All command methods return a true value (C<1>) if the operation was successful,
 and a false value (C<0>) if the command failed.
 
 We will also print to C<STDOUT> the reason for the failure if one occurred.
