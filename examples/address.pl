@@ -22,6 +22,15 @@ for (sort keys %$address) {
 }
 
 my $gear = $car->gear;
+my $charging = $car->charging_state;
+
+say "\n";
 say "gear: $gear";
+say "charging: $charging";
+
+say "\n";
+
+say $car->latitude;
+say $car->longitude;
 
 print "\n";

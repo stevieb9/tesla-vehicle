@@ -31,7 +31,7 @@ my %WriteMakefileArgs = (
     },
     PREREQ_PM => {
         'JSON'          => 0,
-        'Tesla::API'    => '1.02',
+        'Tesla::API'    => '1.03',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES => 'Tesla-Vehicle-*' },
