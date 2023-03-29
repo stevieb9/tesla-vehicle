@@ -10,8 +10,15 @@ use Tesla::Vehicle;
 my $car = Tesla::Vehicle->new(auto_wake => 1);
 
 my $address = $car->address;
+my $id = $car->id;
 
 print "\n";
+
+say "online: " . $car->online;
+say "id: $id";
+
+print Dumper $car->charge_history;
+exit;
 
 say "road: $address->{road}";
 

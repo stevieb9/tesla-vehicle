@@ -154,6 +154,9 @@ sub state {
 sub summary {
     return $_[0]->api(endpoint => 'VEHICLE_SUMMARY', id => $_[0]->id);
 }
+sub charge_history {
+    return $_[0]->api(endpoint => 'VEHICLE_CHARGE_HISTORY', id => $_[0]->id);
+}
 sub charge_state {
     my ($self) = @_;
     $self->_online_check;
@@ -285,7 +288,7 @@ sub charging_sites_nearby {
 }
 sub charging_state {
         return $_[0]->data->{charge_state}{charging_state};
-    }
+}
 sub minutes_to_full_charge {
     return $_[0]->data->{charge_state}{minutes_to_full_charge};
 }
@@ -1117,6 +1120,13 @@ things like whether the car is locked, whether there is media playing, the
 odometer reading, whether sentry mode is enabled or not etc.
 
 I<Return>: Hash reference.
+
+=head2 charge_history
+
+Returns raw information on the charge history of the vehicle.
+
+There is no internal mechanism that organizes the data; it's up to the user to
+decipher the data currently.
 
 =head2 charge_state
 
