@@ -125,7 +125,7 @@ sub data {
         return {};
     }
 
-    if (! defined $data->{drive_state}{shift_state}) {
+    if (! defined $data->{drive_state}{timestamp}) {
 
         for (1 .. API_RETRIES) {
             print "API retry attempt $_\n" if DEBUG_API_RETRY;
@@ -134,7 +134,7 @@ sub data {
 
             $data = $self->api(endpoint => 'VEHICLE_DATA', id => $self->id);
 
-            if (defined $data->{drive_state}{shift_state}) {
+            if (defined $data->{drive_state}{timestamp}) {
                 last;
             }
         }
