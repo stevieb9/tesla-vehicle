@@ -236,7 +236,7 @@ sub speed {
 # Charge State Methods
 
 sub battery_level {
-    return $_[0]->data->{charge_state}{battery_level};
+    return $_[0]->data->{charge_state}{usable_battery_level};
 }
 sub charge_amps {
     return $_[0]->data->{charge_state}{charge_amps};
